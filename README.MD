@@ -1,1 +1,65 @@
-Hola. Este README.MD está todavía en fase de desarrollo. Por favor, vuelva más tarde. Gracias
+~~~
+version: '3.9'
+services:
+  apache:  
+    container_name: asir_dns_apache 
+    image: php:7.4-apache
+    ports:
+      - 443:443
+      - 80:80
+    volumes:  
+      - ./html:/var/www/html:ro
+      - ./apache/ConfApache:/etc/apache2
+    dns:
+      - 192.168.32.69
+    networks:
+      asir_dns_bind9:
+        ipv4_address: 192.168.32.61
+ 
+  bind9:  
+    container_name: asir_dns_bind9  
+    image: internetsystemsconsortium/bind9:9.18
+    ports:
+      - 5300:53/udp
+      - 5300:53/tcp
+    volumes:
+    - ./DNS/config:/etc/bind
+    - ./DNS/zonas:/var/lib/bind
+    networks:
+      asir_dns_bind9:
+        ipv4_address: 192.168.32.69
+
+  asir_cliente:
+    container_name: asir_cliente_alpine
+    image: alpine 
+    stdin_open: true
+    tty: true 
+    dns:
+      - 192.168.32.69
+    networks:
+      asir_dns_bind9:
+        ipv4_address: 192.168.32.63
+
+  firefox:
+    image: lscr.io/linuxserver/firefox:latest
+    container_name: firefox
+    volumes:
+      - ./Firefox:/config
+    ports:
+      - 3000:3000
+    dns:
+      - 192.168.32.69
+    networks:
+      asir_dns_bind9:
+        ipv4_address: 192.168.32.65
+    
+    
+networks:
+  asir_dns_bind9:
+    external: true
+~~~
+Las IPs principales son: 
+ - Apache: 192.168.32.61
+ - Cliente Alpine: 192.168.32.63
+ - Firefox: 192.168.32.65
+ - DNS: 192.168.32.69
