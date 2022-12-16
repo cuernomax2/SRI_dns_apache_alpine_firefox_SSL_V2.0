@@ -62,4 +62,4 @@ Las IPs principales son:
  - Apache: 192.168.32.61
  - Cliente Alpine: 192.168.32.63
  - Firefox: 192.168.32.65
- - DNS: 192.168.32.69
+ - DNS: 192.168.32.69 
